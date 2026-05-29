@@ -82,27 +82,27 @@ async function handleChat(request, env) {
     });
   }
 
-  if (!env.NVIDIA_API_KEY) {
-    return resp(
-      "Missing NVIDIA_API_KEY (please set it with wrangler secret).",
-      "text/plain; charset=utf-8",
-      500
-    );
-  }
+  if (!env.DEEPSEEK_API_KEY) {
+  return resp(
+    "Missing DEEPSEEK_API_KEY (please set it with wrangler secret).",
+    "text/plain; charset=utf-8",
+    500
+  );
+}
 
-  const upstream = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${env.NVIDIA_API_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model,
-      stream: true,
-      stream_options: { include_usage: true },
-      messages: upstreamMessages
-    })
-  });
+const upstream = await fetch("https://api.deepseek.com/chat/completions", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${env.DEEPSEEK_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model,
+    stream: true,
+    stream_options: { include_usage: true },
+    messages: upstreamMessages
+  })
+});
 
   if (!upstream.ok) {
     const errorText = await upstream.text().catch(() => "");
